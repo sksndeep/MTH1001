@@ -149,7 +149,7 @@
 <div class="container">
 <h1>Cryptography Practice</h1>
 <p class="subtitle">Shift, Affine, RSA, Digital Signatures, and Vigenère Ciphers — Shuffled Assessment</p>
-<p class="subtitle"><strong>Deadline:</strong> 30 October 2026, 11:59 PM IST. Solutions become available after the deadline.</p>
+<!--<p class="subtitle"><strong>Deadline:</strong> 20 November 2026, 9:00–9:45 AM IST. Solutions become available after the assessment window.</p>-->
 <div class="info" id="deadline-notice" role="status" style="display:none"></div>
 
 <details id="returning" style="margin:14px 0; font-family:system-ui,sans-serif; font-size:15px;">
@@ -440,8 +440,10 @@ let quizSubmitted = false;
 let quizUnlocked = false;
 let reviewToken = "";
 let reviewEmail = "";
-const DEADLINE_MS = Date.parse("2026-10-30T23:59:59+05:30");
-const DEADLINE_TEXT = "30 October 2026, 11:59 PM IST";
+const START_MS = Date.parse("2026-11-12T00:00:00+05:30");
+const DEADLINE_MS = Date.parse("2026-11-12T23:59:59+05:30");
+const START_TEXT = "20 November 2026, 9:00 AM IST";
+const DEADLINE_TEXT = "20 November 2026, 9:45 AM IST";
 
 let tabSwitchCount = 0;
 const MAX_ALLOWED_SWITCHES = 2;
@@ -460,6 +462,14 @@ document.addEventListener("visibilitychange", function () {
 });
 
 function unlockQuiz() {
+    if (Date.now() < START_MS) {
+        alert("The assessment opens on " + START_TEXT + ". Please return at the scheduled start time.");
+        return;
+    }
+    if (Date.now() > DEADLINE_MS) {
+        alert("The assessment window has closed. Submissions are no longer accepted.");
+        return;
+    }
     const name = document.getElementById("student-name").value.trim();
     const email = document.getElementById("student-email").value.trim();
     const pin = document.getElementById("student-pin").value.trim();
@@ -683,6 +693,10 @@ function showReview(review, answers) {
 }
 
 function submitQuiz() {
+    if (Date.now() > DEADLINE_MS) {
+        alert("The assessment window has closed. Submissions are no longer accepted.");
+        return;
+    }
     if (quizSubmitted) {
         alert("This quiz has already been submitted from this page.");
         return;
@@ -828,10 +842,14 @@ function printWorksheet() {
 (function initDeadlineUI() {
     const saved = savedResult();
     if (saved && saved.email) document.getElementById("returning-email").value = saved.email;
-    if (Date.now() > DEADLINE_MS) {
+    if (Date.now() < START_MS) {
         const notice = document.getElementById("deadline-notice");
         notice.style.display = "block";
-        notice.textContent = "The deadline (" + DEADLINE_TEXT + ") has passed and submissions are closed.";
+        notice.textContent = "The assessment opens on " + START_TEXT + ".; <!--The assessment window is 9:00–9:45 AM IST.";-->
+    } else if (Date.now() > DEADLINE_MS) {
+        const notice = document.getElementById("deadline-notice");
+        notice.style.display = "block";
+        notice.textContent = "The assessment window (" + DEADLINE_TEXT + ") has closed and submissions are no longer accepted.";
         document.getElementById("returning").open = true;
         document.getElementById("login-gate").style.display = "none";
         const submitBtn = document.getElementById("submit-quiz-button");
