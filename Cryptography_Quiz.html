@@ -303,11 +303,11 @@ let tabSwitchCount = 0;
 const MAX_ALLOWED_SWITCHES = 2;
 let timerInterval = null;
 
-// Fixed Schedule: 20 November 2026, 09:10 AM to 09:50 AM IST (+05:30)
-const START_MS = new Date("2026-11-18T19:10:00+05:30").getTime();
-const DEADLINE_MS = new Date("2026-11-18T19:50:00+05:30").getTime();
-const START_TEXT = "20 November 2026, 09:10 AM IST";
-const DEADLINE_TEXT = "20 November 2026, 09:50 AM IST";
+// Fixed Schedule: 20 November 2026, 02:10 PM to 02:50 PM IST (+05:30)
+const START_MS = new Date("2026-11-20T14:10:00+05:30").getTime();
+const DEADLINE_MS = new Date("2026-11-20T14:50:00+05:30").getTime();
+const START_TEXT = "20 November 2026, 02:10 PM IST";
+const DEADLINE_TEXT = "20 November 2026, 02:50 PM IST";
 
 // Stratified Section Pools (Total 20 questions selected across all 6 topics)
 const TOPIC_SECTIONS = [
@@ -582,11 +582,11 @@ function showReview(review, answers) {
         const input = type === "choice" ? q.querySelector('input[type="radio"]:checked') : q.querySelector("input");
         const given = input ? input.value.trim() : "";
         q.classList.remove("correct", "incorrect");
-        if (item.c === true) {
+        if (item.c === 1 || item.c === true) {
             result.textContent = "Correct!";
             result.style.color = "#15803d";
             q.classList.add("correct");
-        } else if (item.c === false) {
+        } else if (item.c === 0 || item.c === false) {
             result.textContent = given === "" ? "Not answered." : "Incorrect. Your answer: " + given;
             result.style.color = "#b91c1c";
             q.classList.add("incorrect");
