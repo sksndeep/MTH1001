@@ -319,10 +319,10 @@ document.addEventListener("input", function (event) {
 });
 
 // Fixed Schedule: 20 November 2026, 09:10 AM to 09:50 AM IST (+05:30)
-const START_MS = new Date("2026-11-19T19:10:00+05:30").getTime();
-const DEADLINE_MS = new Date("2026-11-19T19:50:00+05:30").getTime();
-const START_TEXT = "20 November 2026, 02:10 PM IST";
-const DEADLINE_TEXT = "20 November 2026, 02:50 PM IST";
+const START_MS = new Date("2026-11-18T19:10:00+05:30").getTime();
+const DEADLINE_MS = new Date("2026-11-18T19:50:00+05:30").getTime();
+const START_TEXT = "20 November 2026, 09:10 AM IST";
+const DEADLINE_TEXT = "20 November 2026, 09:50 AM IST";
 
 // Balanced assessment blueprint: every student receives the same section counts
 // AND the same easy/medium/challenging mix within each section (20 questions total).
@@ -738,7 +738,7 @@ function submitQuiz(isAuto = false) {
         delete window[cb];
         if (result && result.success) {
             saveResult(email, String(result.token || ""), assignedQids);
-            status.textContent = "Submission received! Score: " + result.score + " / 20 (" + Math.round((result.score / 20) * 100) + "%). You have now submitted your quiz.";
+            status.textContent = "Your submission has been received successfully. Your score has been sent to your registered email address.";
             document.querySelectorAll(".question.active-subset input, #student-name, #student-email, #student-pin, #student-date").forEach(el => el.disabled = true);
             submitButton.textContent = "Already Submitted";
             submitButton.disabled = false;
