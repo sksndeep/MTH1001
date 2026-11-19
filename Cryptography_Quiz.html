@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Cryptography Quiz</title>
+<h1>MT1001 - Discrete Mathematics Cryptography Quiz</h1>
+<p class="subtitle">Dhirubhai Ambani University (DA-IICT) | Classical Ciphers, RSA &amp; Key Exchange</p>
 <!-- KaTeX CSS for professional math rendering -->
 <link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"/>
 <!-- KaTeX JavaScript -->
@@ -318,7 +319,7 @@ document.addEventListener("input", function (event) {
     }
 });
 
-// Fixed Schedule: 20 November 2026, 09:10 AM to 09:50 AM IST (+05:30)
+// Fixed Schedule: 20 November 2026, 02:10 PM to 02:50 PM IST (+05:30)
 const START_MS = new Date("2026-11-19T19:10:00+05:30").getTime();
 const DEADLINE_MS = new Date("2026-11-19T20:50:00+05:30").getTime();
 const START_TEXT = "20 November 2026, 02:10 PM IST";
@@ -460,9 +461,9 @@ function startTimer() {
         
         if (timeLeftSeconds <= 0) {
             clearInterval(timerInterval);
-            banner.textContent = "Time's Up! (09:50 AM IST Reached)";
+            banner.textContent = "Time's Up! (02:50 PM IST Reached)";
             if (!quizSubmitted) {
-                alert("The assessment deadline (09:50 AM IST) has been reached. Your quiz is being submitted automatically.");
+                alert("The assessment deadline (02:50 PM IST) has been reached. Your quiz is being submitted automatically.");
                 submitQuiz(true);
             }
             return;
@@ -470,7 +471,7 @@ function startTimer() {
 
         let m = Math.floor(timeLeftSeconds / 60);
         let s = timeLeftSeconds % 60;
-        banner.textContent = "Time Remaining until 09:50 AM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+        banner.textContent = "Time Remaining until 02:50 PM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
     }
     updateCountdown();
     timerInterval = setInterval(updateCountdown, 1000);
@@ -742,7 +743,7 @@ function submitQuiz(isAuto = false) {
     const status = document.getElementById("submission-status");
     const submitButton = document.getElementById("submit-quiz-button");
     status.style.display = "block";
-    status.textContent = "Submitting your 20-question quiz… Please do not close this page.";
+    status.textContent = "Submitting your quiz… Please do not close this page.";
     submitButton.disabled = true;
 
     const compact = JSON.stringify({
