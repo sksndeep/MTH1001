@@ -39,14 +39,14 @@
 </head>
 <body>
 <div class="container">
-<h1>MT1001-Cryptography Quiz</h1>
+<h1>Cryptography Quiz</h1>
 <p class="subtitle">Shift, Caesar, Affine, Vigenère, Key Exchange, and RSA Ciphers</p>
 <p class="subtitle"><strong>Time:</strong> 20 November 2026, 02:10 PM to 02:50 PM IST.</p>
 
 <div id="already-submitted-box" class="already-submitted-banner" style="display:none;"></div>
 
 <details id="returning" style="margin:14px 0; font-family:system-ui,sans-serif;">
-<summary><strong>Already submitted?</strong> View your questions and solutions here (available after deadline)</summary>
+<summary><strong>Already submitted?</strong> View your questions and solutions here (available after 3:00 PM IST, 20 November 2026)</summary>
 <div style="margin-top:10px; display:flex; gap:10px;">
 <input id="returning-email" type="email" placeholder="Email used for the quiz" style="flex:1; padding:8px;"/>
 <button id="returning-button" type="button" onclick="viewSolutionsReturning()">Show Solutions</button>
@@ -303,20 +303,77 @@ let tabSwitchCount = 0;
 const MAX_ALLOWED_SWITCHES = 2;
 let timerInterval = null;
 
-// Fixed Schedule: 20 November 2026, 02:10 PM to 02:50 PM IST (+05:30)
-const START_MS = new Date("2026-11-19T18:10:00+05:30").getTime();
-const DEADLINE_MS = new Date("2026-11-19T19:50:00+05:30").getTime();
-const START_TEXT = "20 November 2026, 02:10 PM IST";
-const DEADLINE_TEXT = "20 November 2026, 02:50 PM IST";
+// Automatically capitalise every quiz answer as it is typed or pasted.
+// Student name, email, PIN, and date fields are intentionally unaffected.
+document.addEventListener("input", function (event) {
+    const field = event.target;
+    if (field.matches('.question input[type="text"]')) {
+        const start = field.selectionStart;
+        const end = field.selectionEnd;
+        const upper = field.value.toUpperCase();
+        if (field.value !== upper) {
+            field.value = upper;
+            try { field.setSelectionRange(start, end); } catch (e) {}
+        }
+    }
+});
 
-// Stratified Section Pools (Total 20 questions selected across all 6 topics)
+// Fixed Schedule: 20 November 2026, 09:10 AM to 09:50 AM IST (+05:30)
+const START_MS = new Date("2026-11-18T19:10:00+05:30").getTime();
+const DEADLINE_MS = new Date("2026-11-18T19:50:00+05:30").getTime();
+const START_TEXT = "20 November 2026, 09:10 AM IST";
+const DEADLINE_TEXT = "20 November 2026, 09:50 AM IST";
+
+// Balanced assessment blueprint: every student receives the same section counts
+// AND the same easy/medium/challenging mix within each section (20 questions total).
+// Questions are randomized only within the same section and difficulty band.
 const TOPIC_SECTIONS = [
-    { name: "Shift & Caesar Cipher", count: 4, qids: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,32,33,34,35,36,37,38,39,40,41] },
-    { name: "Affine Cipher", count: 3, qids: [73,74,75,76,77] },
-    { name: "Vigenère Cipher", count: 3, qids: [24,25,56,57,58,59,60,61] },
-    { name: "RSA & Digital Signatures", count: 5, qids: [16,17,18,19,20,21,22,23,26,27,28,29,30,31,42,43,44,45,46,47,48,49,50,51,52,53,54,55] },
-    { name: "Diffie-Hellman Key Exchange", count: 2, qids: [78,79,80,81] },
-    { name: "Cryptography Concepts", count: 3, qids: [62,63,64,65,66,67,68,69,70,71,72] }
+    {
+        name: "Shift & Caesar Cipher", count: 4,
+        levels: [
+            { name: "easy", count: 2, qids: [1,2,3,6,8,11,14,32,33,36,38] },
+            { name: "medium", count: 1, qids: [4,7,9,10,12,15,34,37,40,41] },
+            { name: "challenging", count: 1, qids: [5,13,35,39] }
+        ]
+    },
+    {
+        name: "Affine Cipher", count: 3,
+        levels: [
+            { name: "easy", count: 1, qids: [75,77] },
+            { name: "medium", count: 1, qids: [73,76] },
+            { name: "challenging", count: 1, qids: [74] }
+        ]
+    },
+    {
+        name: "Vigenère Cipher", count: 3,
+        levels: [
+            { name: "easy", count: 1, qids: [56,57,60] },
+            { name: "medium", count: 1, qids: [24,25,59] },
+            { name: "challenging", count: 1, qids: [58,61] }
+        ]
+    },
+    {
+        name: "RSA & Digital Signatures", count: 5,
+        levels: [
+            { name: "easy", count: 1, qids: [16,17,21,43,46,51,52,53] },
+            { name: "medium", count: 2, qids: [18,19,20,26,42,44,45,47,48,49,50,54,55] },
+            { name: "challenging", count: 2, qids: [22,23,27,28,29,30,31] }
+        ]
+    },
+    {
+        name: "Diffie-Hellman Key Exchange", count: 2,
+        levels: [
+            { name: "easy", count: 1, qids: [78,80] },
+            { name: "medium", count: 1, qids: [79,81] }
+        ]
+    },
+    {
+        name: "Cryptography Concepts", count: 3,
+        levels: [
+            { name: "easy", count: 2, qids: [62,64,67,70] },
+            { name: "medium", count: 1, qids: [63,65,66,68,69,71,72] }
+        ]
+    }
 ];
 
 // Disable copy, cut, paste, and right-click context menu globally
@@ -335,11 +392,24 @@ function shuffleArray(arr) {
 }
 
 function selectStratified20Questions() {
-    let selectedQids = [];
+    const selectedQids = [];
     TOPIC_SECTIONS.forEach(sec => {
-        const picked = shuffleArray(sec.qids).slice(0, sec.count);
-        selectedQids = selectedQids.concat(picked);
+        let sectionTotal = 0;
+        sec.levels.forEach(level => {
+            if (level.qids.length < level.count) {
+                throw new Error(`Insufficient ${level.name} questions in ${sec.name}.`);
+            }
+            const picked = shuffleArray(level.qids).slice(0, level.count);
+            selectedQids.push(...picked);
+            sectionTotal += picked.length;
+        });
+        if (sectionTotal !== sec.count) {
+            throw new Error(`The question blueprint for ${sec.name} is inconsistent.`);
+        }
     });
+    if (selectedQids.length !== 20 || new Set(selectedQids).size !== 20) {
+        throw new Error("The quiz blueprint must select exactly 20 distinct questions.");
+    }
     return shuffleArray(selectedQids);
 }
 
@@ -348,7 +418,7 @@ function showAlreadySubmittedMessage(email) {
     box.style.display = "block";
     box.innerHTML = "<strong>Already Submitted:</strong> You have already submitted this quiz" +
         (email ? " (" + email + ")" : "") +
-        ". Only one submission is permitted. You can view your solutions after the deadline using the section below.";
+        ". Only one submission is permitted. You can view your solutions only after 3:00 PM IST on 20 November 2026 using the section below.";
     document.getElementById("login-gate").style.display = "none";
     document.getElementById("quiz-content-area").style.display = "none";
     document.getElementById("returning").open = true;
@@ -374,9 +444,9 @@ function startTimer() {
         
         if (timeLeftSeconds <= 0) {
             clearInterval(timerInterval);
-            banner.textContent = "Time's Up! (02:50 PM IST Reached)";
+            banner.textContent = "Time's Up! (09:50 AM IST Reached)";
             if (!quizSubmitted) {
-                alert("The assessment deadline (02:50 PM IST) has been reached. Your quiz is being submitted automatically.");
+                alert("The assessment deadline (09:50 AM IST) has been reached. Your quiz is being submitted automatically.");
                 submitQuiz(true);
             }
             return;
@@ -384,7 +454,7 @@ function startTimer() {
 
         let m = Math.floor(timeLeftSeconds / 60);
         let s = timeLeftSeconds % 60;
-        banner.textContent = "Time Remaining until 02:50 PM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+        banner.textContent = "Time Remaining until 09:50 AM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
     }
     updateCountdown();
     timerInterval = setInterval(updateCountdown, 1000);
@@ -582,11 +652,11 @@ function showReview(review, answers) {
         const input = type === "choice" ? q.querySelector('input[type="radio"]:checked') : q.querySelector("input");
         const given = input ? input.value.trim() : "";
         q.classList.remove("correct", "incorrect");
-        if (item.c === 1 || item.c === true) {
+        if (item.c === true) {
             result.textContent = "Correct!";
             result.style.color = "#15803d";
             q.classList.add("correct");
-        } else if (item.c === 0 || item.c === false) {
+        } else if (item.c === false) {
             result.textContent = given === "" ? "Not answered." : "Incorrect. Your answer: " + given;
             result.style.color = "#b91c1c";
             q.classList.add("incorrect");
@@ -619,7 +689,7 @@ function submitQuiz(isAuto = false) {
     }
 
     if (!isAuto && Date.now() > DEADLINE_MS + 15000) {
-        alert("The assessment deadline (02:50 PM IST) has already passed.");
+        alert("The assessment deadline (09:50 AM IST) has already passed.");
         return;
     }
     if (timerInterval) clearInterval(timerInterval);
@@ -651,7 +721,7 @@ function submitQuiz(isAuto = false) {
     const status = document.getElementById("submission-status");
     const submitButton = document.getElementById("submit-quiz-button");
     status.style.display = "block";
-    status.textContent = "Submitting your quiz… Please do not close this page.";
+    status.textContent = "Submitting your 20-question quiz… Please do not close this page.";
     submitButton.disabled = true;
 
     const compact = JSON.stringify({
