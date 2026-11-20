@@ -347,9 +347,9 @@ document.addEventListener("input", function (event) {
     }
 });
 
-// Fixed Schedule: 20 November 2026, 02:30 PM to 03:20 PM IST (+05:30)
+// Fixed Schedule: 20 November 2026, 02:30 PM to 03:25 PM IST (+05:30)
 const START_MS = new Date("2026-11-20T14:30:00+05:30").getTime();
-const DEADLINE_MS = new Date("2026-11-20T15:15:00+05:30").getTime();
+const DEADLINE_MS = new Date("2026-11-20T15:30:00+05:30").getTime();
 const START_TEXT = "20 November 2026, 02:30 PM IST";
 const DEADLINE_TEXT = "20 November 2026, 03:15 PM IST";
 const SOLUTIONS_RELEASE_MS = new Date("2026-11-20T15:16:00+05:30").getTime();
@@ -361,11 +361,11 @@ function updateSolutionsAccess() {
     if (!button) return;
     const released = Date.now() >= SOLUTIONS_RELEASE_MS;
     button.disabled = !released;
-    button.title = released ? "View the solutions" : "Available after 3:30 PM IST on 20 November 2026";
+    button.title = released ? "View the solutions" : "Available after 4:00 PM IST on 20 November 2026";
     if (summary) {
         summary.textContent = released
             ? "Already submitted? Enter your email and PIN to review questions and solutions."
-            : "Already submitted? Solutions become available after 3:30 PM IST on 20 November 2026.";
+            : "Already submitted? Solutions become available after 4:00 PM IST on 20 November 2026.";
     }
 }
 
