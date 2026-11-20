@@ -47,12 +47,40 @@
 <div id="already-submitted-box" class="already-submitted-banner" style="display:none;"></div>
 
 <details id="returning" style="margin:14px 0; font-family:system-ui,sans-serif;">
-<summary><strong>Already submitted?</strong> View your questions and solutions here (available after 3:00 PM IST, 20 November 2026)</summary>
-<div style="margin-top:10px; display:flex; gap:10px;">
-<input id="returning-email" type="email" placeholder="Email used for the quiz" style="flex:1; padding:8px;"/>
-<button id="returning-button" type="button" onclick="viewSolutionsReturning()">Show Solutions</button>
-</div>
-<div class="info" id="returning-status" style="display:none; margin-top:10px;"></div>
+  <summary>
+    <strong>Already submitted?</strong>
+    View all 81 questions and solutions here
+    (available after 3:00 PM IST, 20 November 2026)
+  </summary>
+
+  <div style="margin-top:10px;">
+    <input
+      id="returning-email"
+      type="email"
+      placeholder="Your @dau.ac.in email"
+      style="width:95%;padding:10px;margin:5px;"
+    />
+
+    <input
+      id="returning-pin"
+      type="password"
+      placeholder="Your secret PIN"
+      style="width:95%;padding:10px;margin:5px;"
+    />
+
+    <button
+      id="returning-button"
+      type="button"
+      onclick="viewSolutionsReturning()">
+      Show My Solutions
+    </button>
+  </div>
+
+  <div
+    class="info"
+    id="returning-status"
+    style="display:none;margin-top:10px;">
+  </div>
 </details>
 
 <div id="login-gate" class="info" style="background: #fff; border: 2px solid #2563eb;">
@@ -288,7 +316,7 @@
 
 <div id="submission-status" class="info" style="display:none; margin:16px 0;"></div>
 <button id="submit-quiz-button" type="button" onclick="submitQuiz()">Submit Quiz</button>
-<button class="secondary" id="show-solutions-button" type="button" onclick="requestSolutions()" style="display:none">Show My Questions & Solutions</button>
+<button class="secondary" id="show-solutions-button" type="button" onclick="requestSolutions()" style="display:none">Show All 81 Questions & Solutions</button>
 </div>
 </div>
 
@@ -297,7 +325,7 @@
 </footer>
 
 <script>
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5gb5sxzsCR90JkTfjpNjtC1T-Bm4umcKPtskL0hOd34HRNlZbcvLKsJp4z4-fEl9Jrg/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/a/macros/dau.ac.in/s/AKfycbwmIUu5OeiOQgTFPRHXocGdU0gnuAT3UeYCq9fvIXgGJCAFKldTfODc725DtuEJNSP1/exec";
 let quizSubmitted = false, quizUnlocked = false;
 let reviewToken = "", reviewEmail = "";
 let tabSwitchCount = 0;
@@ -319,12 +347,12 @@ document.addEventListener("input", function (event) {
     }
 });
 
-// Fixed Schedule: 20 November 2026, 02:10 PM to 02:50 PM IST (+05:30)
-const START_MS = new Date("2026-11-20T11:10:00+05:30").getTime();
-const DEADLINE_MS = new Date("2026-11-20T11:15:00+05:30").getTime();
+// Fixed Schedule: 20 November 2026, 02:10 PM to 02:55 PM IST (+05:30)
+const START_MS = new Date("2026-11-20T14:10:00+05:30").getTime();
+const DEADLINE_MS = new Date("2026-11-20T14:55:00+05:30").getTime();
 const START_TEXT = "20 November 2026, 02:10 PM IST";
-const DEADLINE_TEXT = "20 November 2026, 02:50 PM IST";
-const SOLUTIONS_RELEASE_MS = new Date("2026-11-20T11:15:00+05:30").getTime();
+const DEADLINE_TEXT = "20 November 2026, 02:55 PM IST";
+const SOLUTIONS_RELEASE_MS = new Date("2026-11-20T15:00:00+05:30").getTime();
 let solutionsGateInterval = null;
 
 function updateSolutionsAccess() {
@@ -336,7 +364,7 @@ function updateSolutionsAccess() {
     button.title = released ? "View the solutions" : "Available after 3:00 PM IST on 20 November 2026";
     if (summary) {
         summary.textContent = released
-            ? "Already submitted? Enter your email to view your questions and solutions."
+            ? "Already submitted? Enter your email and PIN to review all questions and solutions."
             : "Already submitted? Solutions become available after 3:00 PM IST on 20 November 2026.";
     }
 }
@@ -461,9 +489,9 @@ function startTimer() {
         
         if (timeLeftSeconds <= 0) {
             clearInterval(timerInterval);
-            banner.textContent = "Time's Up! (02:50 PM IST Reached)";
+            banner.textContent = "Time's Up! (02:55 PM IST Reached)";
             if (!quizSubmitted) {
-                alert("The assessment deadline (02:50 PM IST) has been reached. Your quiz is being submitted automatically.");
+                alert("The assessment deadline (02:55 PM IST) has been reached. Your quiz is being submitted automatically.");
                 submitQuiz(true);
             }
             return;
@@ -471,7 +499,7 @@ function startTimer() {
 
         let m = Math.floor(timeLeftSeconds / 60);
         let s = timeLeftSeconds % 60;
-        banner.textContent = "Time Remaining until 02:50 PM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+        banner.textContent = "Time Remaining until 02:55 PM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
     }
     updateCountdown();
     timerInterval = setInterval(updateCountdown, 1000);
@@ -521,6 +549,11 @@ function unlockQuiz() {
         }
 
         if (result && result.success) {
+            if (Date.now() < START_MS || Date.now() >= DEADLINE_MS) {
+                loginStatus.textContent = "The assessment is not currently open (2:10–2:55 PM IST).";
+                startBtn.disabled = false;
+                return;
+            }
             document.getElementById("login-gate").style.display = "none";
             document.getElementById("quiz-content-area").style.display = "block";
             
@@ -560,7 +593,7 @@ function unlockQuiz() {
         startBtn.disabled = false;
     };
     scriptEl.src = GOOGLE_APPS_SCRIPT_URL +
-        "?action=verifyPin&callback=" + encodeURIComponent(cb) +
+        "?action=verify&callback=" + encodeURIComponent(cb) +
         "&email=" + encodeURIComponent(email) +
         "&pin=" + encodeURIComponent(pin);
     document.body.appendChild(scriptEl);
@@ -581,7 +614,7 @@ function savedResult() {
     try { return JSON.parse(localStorage.getItem("cryptoQuizSaved") || "null"); } catch (e) { return null; }
 }
 
-function loadSolutions(email, token, status, button) {
+function loadSolutions(email, token, status, button, pin) {
     button.disabled = true;
     status.style.display = "block";
     status.textContent = "Loading solutions…";
@@ -590,8 +623,8 @@ function loadSolutions(email, token, status, button) {
     window[cb] = function (result) {
         delete window[cb];
         if (result && result.success && Array.isArray(result.review)) {
-            showReview(result.review, result.answers);
-            status.textContent = "Solutions are shown below each question.";
+            showReview(result.review);
+            status.textContent = "All 81 questions and their solutions are displayed below. Your 20 assigned questions also show your submitted responses.";
             button.textContent = "Solutions Shown";
         } else {
             status.textContent = (result && result.message) || "Could not load solutions.";
@@ -604,7 +637,8 @@ function loadSolutions(email, token, status, button) {
     el.src = GOOGLE_APPS_SCRIPT_URL +
         "?action=solutions&callback=" + encodeURIComponent(cb) +
         "&email=" + encodeURIComponent(email) +
-        "&token=" + encodeURIComponent(token || "");
+        "&token=" + encodeURIComponent(token || "") +
+        "&pin=" + encodeURIComponent(pin || "");
     document.body.appendChild(el);
 }
 
@@ -612,89 +646,141 @@ function requestSolutions() {
     if (!quizSubmitted || !reviewToken) return;
     loadSolutions(reviewEmail, reviewToken,
         document.getElementById("submission-status"),
-        document.getElementById("show-solutions-button"));
+        document.getElementById("show-solutions-button"),
+        document.getElementById("returning-pin").value.trim());
 }
 
 function viewSolutionsReturning() {
     const status = document.getElementById("returning-status");
-    if (Date.now() < SOLUTIONS_RELEASE_MS) {
-        status.style.display = "block";
-        status.textContent = "Solutions will be available only after 3:00 PM IST on 20 November 2026.";
-        return;
-    }
+    const button = document.getElementById("returning-button");
+
     const email = document.getElementById("returning-email").value.trim();
-    if (!email) {
-        status.style.display = "block";
-        status.textContent = "Please enter your email address.";
+    const pin = document.getElementById("returning-pin").value.trim();
+
+    status.style.display = "block";
+
+    if (Date.now() < SOLUTIONS_RELEASE_MS) {
+        status.textContent =
+            "Solutions will be available only after 3:00 PM IST on 20 November 2026.";
         return;
     }
-    const saved = savedResult();
-    const token = (saved && saved.email && saved.email.toLowerCase() === email.toLowerCase()) ? saved.token : "";
-    loadSolutions(email, token, status, document.getElementById("returning-button"));
-}
 
-function showReview(review, answers) {
-    let targetQuestions = document.querySelectorAll(".question.active-subset");
-    if (targetQuestions.length === 0) {
-        document.getElementById("quiz-content-area").style.display = "block";
-        document.getElementById("timer-banner").style.display = "none";
-        document.getElementById("submit-quiz-button").style.display = "none";
-        
-        let displayIdx = 1;
-        document.querySelectorAll(".question").forEach(q => {
-            const qid = Number(q.dataset.qid);
-            const hasAnswer = Array.isArray(answers) && answers[qid - 1] && answers[qid - 1].trim() !== "";
-            if (!Array.isArray(answers) || hasAnswer) {
-                q.style.display = "block";
-                q.classList.add("active-subset");
-                const label = q.querySelector("p > strong");
-                if (label) label.textContent = (displayIdx++) + ".";
-            }
-        });
-        targetQuestions = document.querySelectorAll(".question.active-subset");
+    if (!email || !pin) {
+        status.textContent = "Please enter both your email address and PIN.";
+        return;
     }
 
-    targetQuestions.forEach(q => {
-        const qid = Number(q.dataset.qid);
-        const item = review[qid - 1];
-        if (!item) return;
-        const type = q.dataset.type;
+    button.disabled = true;
+    status.textContent = "Verifying your details...";
 
-        if (Array.isArray(answers)) {
-            const a = answers[qid - 1] || "";
-            if (type === "choice") {
-                q.querySelectorAll('input[type="radio"]').forEach(r => { r.checked = (r.value === a); r.disabled = true; });
-            } else {
-                const field = q.querySelector("input");
-                if (field) { field.value = a; field.disabled = true; }
-            }
+    const cb = "recoverCallback_" + Date.now();
+
+    window[cb] = function(result) {
+        delete window[cb];
+
+        if (!result || !result.success || !result.token) {
+            status.textContent =
+                (result && result.message) || "Could not recover your submission.";
+            button.disabled = false;
+            return;
         }
 
-        const result = q.querySelector(".result");
-        const input = type === "choice" ? q.querySelector('input[type="radio"]:checked') : q.querySelector("input");
-        const given = input ? input.value.trim() : "";
+        saveResult(email, result.token, []);
+
+        loadSolutions(
+            email,
+            result.token,
+            status,
+            button,
+            pin
+        );
+    };
+
+    const script = document.createElement("script");
+
+    script.onerror = function() {
+        delete window[cb];
+        status.textContent = "Could not reach the server. Please try again.";
+        button.disabled = false;
+    };
+
+    script.src = GOOGLE_APPS_SCRIPT_URL +
+        "?action=recoverReviewToken" +
+        "&callback=" + encodeURIComponent(cb) +
+        "&email=" + encodeURIComponent(email) +
+        "&pin=" + encodeURIComponent(pin);
+
+    document.body.appendChild(script);
+}
+function showReview(review) {
+    // The server supplies the full 81-item solution bank only after release and authentication.
+    // Students can identify their own 20 assignments without hiding the other questions.
+    const reviewByQid = {};
+    review.forEach(item => { reviewByQid[Number(item.questionNumber)] = item; });
+    document.getElementById("quiz-content-area").style.display = "block";
+    document.getElementById("timer-banner").style.display = "none";
+    document.getElementById("submit-quiz-button").style.display = "none";
+
+    const container = document.getElementById("questions-container");
+    const allQuestions = [...document.querySelectorAll(".question")];
+    allQuestions.sort((a, b) => Number(a.dataset.qid) - Number(b.dataset.qid));
+    allQuestions.forEach(q => {
+        const qid = Number(q.dataset.qid);
+        const item = reviewByQid[qid];
+        if (!item) { q.style.display = "none"; return; }
+        container.appendChild(q);
+        q.style.display = "block";
+        q.classList.add("active-subset");
+        const label = q.querySelector("p > strong");
+        if (label) label.textContent = qid + ".";
+
+        const assigned = item.assigned === true;
+        const answer = assigned && item.userAnswer !== "[Unanswered]"
+            ? String(item.userAnswer ?? "") : "";
+        if (q.dataset.type === "choice") {
+            q.querySelectorAll('input[type="radio"]').forEach(r => {
+                r.checked = assigned && r.value === answer;
+                r.disabled = true;
+            });
+        } else {
+            const field = q.querySelector("input");
+            if (field) { field.value = answer; field.disabled = true; }
+        }
+
+        const resultBox = q.querySelector(".result");
         q.classList.remove("correct", "incorrect");
-        if (item.c === true) {
-            result.textContent = "Correct!";
-            result.style.color = "#15803d";
+        if (!assigned) {
+            resultBox.textContent = "Not assigned in your 20-question quiz — study question.";
+            resultBox.style.color = "#475569";
+        } else if (item.correct === true) {
+            resultBox.textContent = "Assigned to you — Correct!";
+            resultBox.style.color = "#15803d";
             q.classList.add("correct");
-        } else if (item.c === false) {
-            result.textContent = given === "" ? "Not answered." : "Incorrect. Your answer: " + given;
-            result.style.color = "#b91c1c";
+        } else {
+            resultBox.textContent = answer === ""
+                ? "Assigned to you — Not answered."
+                : "Assigned to you — Incorrect. Your answer: " + answer;
+            resultBox.style.color = "#b91c1c";
             q.classList.add("incorrect");
         }
 
-        let box = q.querySelector(".solution");
-        if (!box) {
-            box = document.createElement("div");
-            box.className = "solution";
-            q.appendChild(box);
+        let solutionBox = q.querySelector(".solution");
+        if (!solutionBox) {
+            solutionBox = document.createElement("div");
+            solutionBox.className = "solution";
+            q.appendChild(solutionBox);
         }
-        box.innerHTML = item.s;
+        solutionBox.textContent = item.solution || "Solution unavailable.";
         if (window.renderMathInElement) {
-            try { renderMathInElement(box, {delimiters: [{left: '\\(', right: '\\)', display: false}, {left: '$$', right: '$$', display: true}]}); } catch (e) {}
+            try {
+                renderMathInElement(solutionBox, {delimiters: [
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '$$', right: '$$', display: true}
+                ]});
+            } catch (e) {}
         }
     });
+    window.scrollTo({top: 0, behavior: "smooth"});
 }
 
 function submitQuiz(isAuto = false) {
@@ -711,7 +797,7 @@ function submitQuiz(isAuto = false) {
     }
 
     if (!isAuto && Date.now() > DEADLINE_MS + 15000) {
-        alert("The assessment deadline (02:55 PM IST) has already passed.");
+        alert("The assessment deadline has already passed.");
         return;
     }
     if (timerInterval) clearInterval(timerInterval);
@@ -728,8 +814,7 @@ function submitQuiz(isAuto = false) {
     }
 
     const activeQuestions = document.querySelectorAll(".question.active-subset");
-    const totalQCount = document.querySelectorAll(".question").length;
-    const responses = new Array(totalQCount).fill("");
+    const responses = [];
     const assignedQids = [];
     
     activeQuestions.forEach(q => {
@@ -737,8 +822,14 @@ function submitQuiz(isAuto = false) {
         assignedQids.push(qid);
         const type = q.dataset.type;
         const selected = type === "choice" ? q.querySelector('input[type="radio"]:checked') : q.querySelector("input");
-        responses[qid - 1] = selected ? selected.value.trim() : "";
+        responses.push(selected ? selected.value.trim() : "");
     });
+
+    if (assignedQids.length !== 20 || responses.length !== 20) {
+        quizSubmitted = false;
+        alert("The quiz must contain exactly 20 assigned questions. Please reload and try again.");
+        return;
+    }
 
     const status = document.getElementById("submission-status");
     const submitButton = document.getElementById("submit-quiz-button");
@@ -762,10 +853,14 @@ function submitQuiz(isAuto = false) {
             // Save only the submission marker/token locally; never display answers or marks.
             saveResult(email, String(result.token || ""), assignedQids);
             quizSubmitted = true;
-            document.body.innerHTML = "<main style=\"font-family:Arial,sans-serif;max-width:560px;margin:12vh auto;padding:24px;text-align:center;\"><h2>Submission recorded</h2><p>Your quiz has been submitted successfully.</p><p>This window will close automatically. If it remains open, you may close it.</p></main>";
-            // Browsers may block closing a tab that was not opened by script.
-            window.open("", "_self");
-            window.close();
+            quizUnlocked = false;
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById("quiz-content-area").style.display = "none";
+            document.getElementById("login-gate").style.display = "none";
+            document.getElementById("returning").open = true;
+            document.getElementById("returning-email").value = email;
+            document.getElementById("already-submitted-box").style.display = "block";
+            document.getElementById("already-submitted-box").textContent = "Submission recorded successfully. A copy of your answers is being emailed to " + email + ". All 81 questions and solutions will be available here from 3:00 PM IST. Return using your email and PIN.";
         } else {
             const msg = (result && result.message) || "Submission failed. Please check credentials.";
             if (/already/i.test(msg)) {
