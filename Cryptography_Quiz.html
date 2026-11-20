@@ -42,7 +42,7 @@
 <div class="container">
 <h1>Cryptography Quiz</h1>
 <p class="subtitle">Shift, Caesar, Affine, Vigenère, Key Exchange, and RSA Ciphers</p>
-<p class="subtitle"><strong>Time:</strong> 20 November 2026, 02:10 PM to 02:55 PM IST.</p>
+<p class="subtitle"><strong>Time:</strong> 20 November 2026, 02:25 PM to 03:10 PM IST.</p>
 
 <div id="already-submitted-box" class="already-submitted-banner" style="display:none;"></div>
 
@@ -50,7 +50,7 @@
   <summary>
     <strong>Already submitted?</strong>
     View all 81 questions and solutions here
-    (available after 3:00 PM IST, 20 November 2026)
+    (available after 3:15 PM IST, 20 November 2026)
   </summary>
 
   <div style="margin-top:10px;">
@@ -347,12 +347,12 @@ document.addEventListener("input", function (event) {
     }
 });
 
-// Fixed Schedule: 20 November 2026, 02:25 PM to 03:10 PM IST (+05:30)
-const START_MS = new Date("2026-11-20T14:25:00+05:30").getTime();
-const DEADLINE_MS = new Date("2026-11-20T15:10:00+05:30").getTime();
-const START_TEXT = "20 November 2026, 02:20 PM IST";
+// Fixed Schedule: 20 November 2026, 02:30 PM to 03:20 PM IST (+05:30)
+const START_MS = new Date("2026-11-20T14:30:00+05:30").getTime();
+const DEADLINE_MS = new Date("2026-11-20T15:15:00+05:30").getTime();
+const START_TEXT = "20 November 2026, 02:30 PM IST";
 const DEADLINE_TEXT = "20 November 2026, 03:15 PM IST";
-const SOLUTIONS_RELEASE_MS = new Date("2026-11-20T15:10:00+05:30").getTime();
+const SOLUTIONS_RELEASE_MS = new Date("2026-11-20T15:16:00+05:30").getTime();
 let solutionsGateInterval = null;
 
 function updateSolutionsAccess() {
@@ -361,11 +361,11 @@ function updateSolutionsAccess() {
     if (!button) return;
     const released = Date.now() >= SOLUTIONS_RELEASE_MS;
     button.disabled = !released;
-    button.title = released ? "View the solutions" : "Available after 3:00 PM IST on 20 November 2026";
+    button.title = released ? "View the solutions" : "Available after 3:30 PM IST on 20 November 2026";
     if (summary) {
         summary.textContent = released
-            ? "Already submitted? Enter your email and PIN to review all questions and solutions."
-            : "Already submitted? Solutions become available after 3:00 PM IST on 20 November 2026.";
+            ? "Already submitted? Enter your email and PIN to review questions and solutions."
+            : "Already submitted? Solutions become available after 3:30 PM IST on 20 November 2026.";
     }
 }
 
@@ -463,7 +463,7 @@ function showAlreadySubmittedMessage(email) {
     box.style.display = "block";
     box.innerHTML = "<strong>Already Submitted:</strong> You have already submitted this quiz" +
         (email ? " (" + email + ")" : "") +
-        ". Only one submission is permitted. You can view your solutions only after 3:00 PM IST on 20 November 2026 using the section below.";
+        ". Only one submission is permitted. You can view your solutions only after 3:15 PM IST on 20 November 2026 using the section below.";
     document.getElementById("login-gate").style.display = "none";
     document.getElementById("quiz-content-area").style.display = "none";
     document.getElementById("returning").open = true;
@@ -489,9 +489,9 @@ function startTimer() {
         
         if (timeLeftSeconds <= 0) {
             clearInterval(timerInterval);
-            banner.textContent = "Time's Up! (02:55 PM IST Reached)";
+            banner.textContent = "Time's Up! (03:10 PM IST Reached)";
             if (!quizSubmitted) {
-                alert("The assessment deadline (02:55 PM IST) has been reached. Your quiz is being submitted automatically.");
+                alert("The assessment deadline (03:10 PM IST) has been reached. Your quiz is being submitted automatically.");
                 submitQuiz(true);
             }
             return;
@@ -499,7 +499,7 @@ function startTimer() {
 
         let m = Math.floor(timeLeftSeconds / 60);
         let s = timeLeftSeconds % 60;
-        banner.textContent = "Time Remaining until 02:55 PM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+        banner.textContent = "Time Remaining until 03:10 PM: " + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
     }
     updateCountdown();
     timerInterval = setInterval(updateCountdown, 1000);
@@ -550,7 +550,7 @@ function unlockQuiz() {
 
         if (result && result.success) {
             if (Date.now() < START_MS || Date.now() >= DEADLINE_MS) {
-                loginStatus.textContent = "The assessment is not currently open (2:10–2:55 PM IST).";
+                loginStatus.textContent = "The assessment is not currently open (2:25–3:10 PM IST).";
                 startBtn.disabled = false;
                 return;
             }
@@ -661,7 +661,7 @@ function viewSolutionsReturning() {
 
     if (Date.now() < SOLUTIONS_RELEASE_MS) {
         status.textContent =
-            "Solutions will be available only after 3:00 PM IST on 20 November 2026.";
+            "Solutions will be available only after 3:15 PM IST on 20 November 2026.";
         return;
     }
 
@@ -860,7 +860,7 @@ function submitQuiz(isAuto = false) {
             document.getElementById("returning").open = true;
             document.getElementById("returning-email").value = email;
             document.getElementById("already-submitted-box").style.display = "block";
-            document.getElementById("already-submitted-box").textContent = "Submission recorded successfully. A copy of your answers is being emailed to " + email + ". All 81 questions and solutions will be available here from 3:00 PM IST. Return using your email and PIN.";
+            document.getElementById("already-submitted-box").textContent = "Submission recorded successfully. A copy of your answers is being emailed to " + email + ". All 81 questions and solutions will be available here from 3:15 PM IST. Return using your email and PIN.";
         } else {
             const msg = (result && result.message) || "Submission failed. Please check credentials.";
             if (/already/i.test(msg)) {
